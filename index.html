@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bienvenidos a progra IV</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    Aplicacion web con Vue.js <br>
+    Introduccion a:<br>
+    <ul id="tecnologias">
+        <li>HTML5</li>
+        <li>CSS3</li>
+        <li>JavaScript</li>
+        <li>Vue.js</li>
+        <li>BootStrap</li>
+        <li>PHP</li>
+        <li>Larabel</li>
+        <li>MySQL</li>
+        <li>Node.js</li>
+        <li>Mongo.DB</li>
+        <li>Socket.io</li>
+    </ul>
+    <form id="frmSaludo" method="POST">
+    <table>
+        <thead>
+            <tr>
+                <td colspan="2">SALUDO</td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    Nombre:
+                </td>
+                <td>
+                    <input v-model="saludo" placeholder="Escribe tu mensaje" type="text" name="txtsaludo" id="txtsaludo">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">Hola: {{ saludo }}, que tal</td>
+            </tr>
+        </tbody>
+    </table>
+</form>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+<script src="main.js"></script>
+
+</body>
+</html>
