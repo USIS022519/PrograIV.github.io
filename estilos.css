@@ -1,6 +1,35 @@
+*{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 16px;
+}
+
 body {
-    background: rgb(131, 117, 207);
-    color: #FFF
+    background: rgb(213, 247, 236);
+    color: rgb(0, 0, 0)
+}
+
+input{
+    display: inline-block;
+    position: relative;
+    margin: 5px;
+    padding: 5px;
+}
+input:valid {
+    background-color: #c7ffc0;
+    border: 1px solid #dbd4d4;;
+}
+input:invalid {
+    background-color: #f3baba;
+    border: 1px solid #fd0000;
+}
+
+.parrafo {
+    color: rgb(225, 0, 0);
+    background: #b3e2a1;
+}
+
+#parrafo {
+    text-transform: uppercase;
 }
 
 #tecnologias {
