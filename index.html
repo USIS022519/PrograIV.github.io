@@ -4,69 +4,112 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bienvenidos a progra IV</title>
-    <link rel="stylesheet" href="estilos.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
 </head>
 <body>
-    Aplicacion web con Vue.js <br>
-    Introduccion a:<br>
-    <p class="parrafo" id="parrafo">Prueba de lo que podemos hacer en CSS3</p>
-    <ul id="tecnologias">
-        <li>HTML5</li>
-        <li>CSS3</li>
-        <li>JavaScript</li>
-        <li>Vue.js</li>
-        <li>BootStrap</li>
-        <li>PHP</li>
-        <li>Larabel</li>
-        <li>MySQL</li>
-        <li>Node.js</li>
-        <li>Mongo.DB</li>
-        <li>Socket.io</li>
-    </ul>
-    <form id="frmSaludo" method="POST">
-    <table>
-        <thead>
-            <tr>
-                <td colspan="2" align="center">SALUDO</td>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>
-                    Nombre:
-                </td>
-                <td>
-                    <input pattern="[a-zA-Z ]{3,100}" v-model="saludo" placeholder="Escribe tu mensaje" type="text" name="txtsaludo" id="txtsaludo">
-                </td>
-            </tr>
-            <tr>
-                <td>FechaNacimiento:</td>
-                <td>
-                    <input type="date">
-                </td>
-            </tr>
-            <tr>
-                <td>Tel:</td>
-                <td><input pattern="[0-9]{4}-[0-9]{4}" type="tel"></td>
-            </tr>
-            <tr>
-                <td>Genero:</td>
-                <td>
-                    <label for="optMasculino">M: </label><input checked type="radio" name="optGenero" id="Masculino">
-                    <label for="optFemenino">F: </label><input type="radio" name="optGenero" id="Femenino">
-                </td>
-            </tr>
-            <tr>
-                <td>Email:</td>
-                <td><input type="email"></td>
-            </tr>
-
-            <tr>
-                <td colspan="2">Hola: {{ saludo }}, que tal</td>
-            </tr>
-        </tbody>
-    </table>
-</form>
+    <div id="appAlumnos" class="container-fluid">
+        <form v-on:submit.prevent="guardarAlumno" v-on:reset="limpiar">
+            <div class="row">
+                <div class="col-sm-5">
+                    <div class="row p-2">
+                        <div class="col-sm text-center text-white bg-primary">
+                            <h5>REGISTRAR ALUMNO/h5>
+                        </div>
+                    </div>
+                    <div class="row p-2">
+                        <div class="col-sm">Codigo:</div>
+                        <div class="col-sm">
+                            <input v-model="alumno.codigo" required pattern="^[A-Z]{4}[0-9]{6}$" type="text" class="form-control form-control-sm">
+                        </div>
+                    </div>
+                    <div class="row p-2">
+                        <div class="col-sm">Nombre:</div>
+                   <div class="col-sm">
+                       <input v-model="alumno.nombre"  type="text" class="form-control form-control-sm">
+                   </div>
+                    </div>
+                    <div class="row p-2">
+                        <div class="col-sm">Direccion:</div>
+                   <div class="col-sm">
+                       <input v-model="alumno.direccion"  type="text" class="form-control form-control-sm">
+                   </div>
+                    </div>
+                    <div class="row p-2">
+                        <div class="col-sm">Municipio:</div>
+                        <div class="col-sm">
+                            <input v-model="alumno.municipio"  type="text" class="form-control form-control-sm">
+                        </div>
+                    </div>
+                    <div class="row p-2">
+                        <div class="col-sm">Departamento:</div>
+                        <div class="col-sm">
+                            <input v-model="alumno.departamento" type="text" class="form-control form-control-sm">
+                        </div>
+                    </div>
+                    <div class="row p-2">
+                        <div class="col-sm">Telefono:</div>
+                        <div class="col-sm">
+                            <input v-model="alumno.telefono"  type="tel" class="form-control form-control-sm">
+                        </div>
+                    </div>
+                    <div class="row p-2">
+                        <div class="col-sm">Fecha de nacimiento:</div>
+                        <div class="col-sm">
+                            <input v-model="alumno.fechaN" type="date" class="form-control form-control-sm">
+                        </div>
+                    </div>
+                       <div class="row p-2">
+                        <div class="col-sm">Sexo:</div>
+                        <div class="col-sm">
+                            <input v-model="alumno.sexo" type="tel" class="form-control form-control-sm">
+                        </div>
+                    </div>
+                    <div class="row -p-2">
+                        <div class="col-sm text-center">
+                            <input type="submit" value="Save" class="btn btn-success">
+                            <input type="reset" value="Reset" class="btn btn-warning">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm"></div>
+                <div class="col-sm-6 p-2">
+                    <div class="row-sm text-center text-white bg-danger">
+                        <div class="col"><h5>ALUMNOS REGISTRADOS</h5></div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <table class="tble table-sm text-ligth sm">
+                                <thead>
+                                    <tr >
+                                        <th>Codigo</th>
+                                        <th>Nombre</th>
+                                        <th>Direccion</th>
+                                        <th>Municipio</th>
+                                        <th>Departamento</th>
+                                        <th>Telefono</th>
+                                        <th>Fecha N</th>
+                                        <th>Sexo</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="alum in alumnos" v-on:click="mostrarAlumno(alum)">
+                                        <td>{{ alum.codigo }}</td>
+                                        <td>{{ alum.nombre }}</td>
+                                        <td>{{ alum.direccion }}</td>
+                                        <td>{{ alum.municipio }}</td>
+                                        <td>{{ alum.departamento }}</td>
+                                        <td>{{ alum.telefono }}</td>
+                                        <td>{{ alum.fechaN }}</td>
+                                        <td>{{ alum.sexo }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+               </div>
+            </div>
+        </form>
+    </div>
 
 <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
 <script src="main.js"></script>
