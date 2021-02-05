@@ -64,10 +64,17 @@
                             <input v-model="alumno.sexo" type="tel" class="form-control form-control-sm">
                         </div>
                     </div>
-                    <div class="row -p-2">
+                    <div class="row p-2">
                         <div class="col-sm text-center">
                             <input type="submit" value="Save" class="btn btn-success">
                             <input type="reset" value="Reset" class="btn btn-warning">
+                        </div>
+                    </div>
+                    <div class="row p-2">
+                        <div class="col-sm text-center">
+                            <div v-if="status" class="alert" v-bind:class="[error ? 'alert-danger' : 'alert-success']">
+                                {{ msg }}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -101,6 +108,9 @@
                                         <td>{{ alum.telefono }}</td>
                                         <td>{{ alum.fechaN }}</td>
                                         <td>{{ alum.sexo }}</td>
+                                        <td>
+                                            <button @click="eliminarAlumno(alum)" class="btn btn-danger">Del</button>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
