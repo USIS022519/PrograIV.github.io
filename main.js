@@ -15,7 +15,8 @@ var appVue = new Vue({
         accion : 'nuevo',
         msg : '',
         status : false,
-        error : false,
+        error :  false,
+        buscar : "",
         alumno:{
             idAlumno : 0,
             codigo : '',
@@ -30,14 +31,22 @@ var appVue = new Vue({
         alumnos:[]
     },
     methods:{
+
+        buscandoAlumnos(){
+            this.alumnos = this.alumnos.filter((element,index,alumnos) => element.nombre.toUpperCase().indexOf(this.buscar.toUpperCase())>=0 || element.codigo.toUpperCase().indexOf(this.buscar.toUpperCase())>=0 );
+            if( this.buscar.length<=0){
+                this.obtenerAlumnos();
+            }
+        },
+
         guardarAlumno(){
             /*Db LocalStorage*/
 
-           if (this.accion == 'nuevo'){
+           if (this.accion=='nuevo'){
             this.alumno.idAlumno = generarIdUnicoDesdeFecha();
            }
 
-           localStorage.setItem(this.alumno.idAlumno, JSON.stringify(this.alumno));
+           localStorage.setItem( this.alumno.idAlumno, JSON.stringify(this.alumno) );
            this.obtenerAlumnos();
            this.limpiar();
            this.status = true;
@@ -45,7 +54,7 @@ var appVue = new Vue({
            this.error = false;
 
            setTimeout(()=>{
-               this.status = false;
+               this.status=false;
                this.msg = '';
            }, 3000);
         },

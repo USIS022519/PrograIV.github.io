@@ -87,6 +87,11 @@
                         <div class="col">
                             <table class="tble table-sm text-ligth sm">
                                 <thead>
+                                    <tr>
+                                        <td colspan="5">
+                                            <input v-model="buscar" v-on:keyup="buscandoAlumnos" type="text" class="form-control form-contro-sm" placeholder="Buscar estudiante">
+                                        </td>
+                                    </tr>
                                     <tr >
                                         <th>Codigo</th>
                                         <th>Nombre</th>
@@ -96,6 +101,7 @@
                                         <th>Telefono</th>
                                         <th>Fecha N</th>
                                         <th>Sexo</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
