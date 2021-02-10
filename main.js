@@ -1,13 +1,8 @@
-var miDBAlumnos = openDatabase('dbAlumnos', '1.0', 'Aplicacion de registro de alumnos',5*1024*1024);
-
+const indexDB = indexedDB.open('db_alumnos', 1);    
 var generarIdUnicoDesdeFecha=()=>{
     let fecha = new Date(); // 05/02/21
     return Math.floor(fecha.getTime()/1000).toString(16);
 };
-
-if(!miDBAlumnos){
-    alert("El navegador no soporta web sql");
-}
 
 var appVue = new Vue({
     el: '#appAlumnos',
@@ -40,23 +35,37 @@ var appVue = new Vue({
         },
 
         guardarAlumno(){
-            /*Db LocalStorage*/
+            /*DB indexDB --> Es una DB NOSQL clave/valor.
+              WebSQL --> Esta DB es relacional en el navegador.
+              Localstorage --> Esta es NOSQL clave/valor.
+            */
 
            if (this.accion=='nuevo'){
             this.alumno.idAlumno = generarIdUnicoDesdeFecha();
            }
+           let db = indexDB.result,
+           transaccion = db.transaction('tblalumnos', "readwrite"),
+           alumnos = transaccion.objectStore('tblalumnos'),
+           query = alumnos.put(JSON.stringify(this.alumno));
 
-           localStorage.setItem( this.alumno.idAlumno, JSON.stringify(this.alumno) );
-           this.obtenerAlumnos();
-           this.limpiar();
-           this.status = true;
-           this.msg = 'Registro exitoso.';
-           this.error = false;
+           query.onsuccess=event=>{
+            this.obtenerAlumnos();
+            this.limpiar();
+            this.status = true;
+            this.msg = 'Registro exitoso.';
+            this.error = false;
 
-           setTimeout(()=>{
-               this.status=false;
-               this.msg = '';
-           }, 3000);
+            setTimeout(()=>{
+                this.status=false;
+                this.msg = '';
+            }, 3000);
+         };
+             query.onerror=event=>{
+              this.status = true;
+               this.msg = 'Error al ingresar los datos.';
+              this.error = true; 
+              console.log( event );
+            }; 
         },
            
            obtenerAlumnos(){
@@ -95,6 +104,11 @@ var appVue = new Vue({
     },
 
     created(){
+        indexDB.onupgradeneeded=event=>{
+            let db = event.target.result,
+            tblalumnos = db.createObjectStore('tblalumnos', {autoIncrement:true});
+            tblalumnos.createIndex('idAlumno', 'idAlumno', {unique:true});
+        };
         this.obtenerAlumnos();
     }
 });
