@@ -1,8 +1,7 @@
-const indexDB = indexedDB.open('db_alumnos', 1);    
-var generarIdUnicoDesdeFecha=()=>{
+ var generarIdUnicoDesdeFecha=()=>{
     let fecha = new Date(); // 05/02/21
     return Math.floor(fecha.getTime()/1000).toString(16);
-};
+}, db;
 
 var appVue = new Vue({
     el: '#appAlumnos',
@@ -35,45 +34,62 @@ var appVue = new Vue({
         },
 
         guardarAlumno(){
-            /*DB indexDB --> Es una DB NOSQL clave/valor.
+            /*DB indexedDB --> Es una DB NOSQL clave/valor.
               WebSQL --> Esta DB es relacional en el navegador.
               Localstorage --> Esta es NOSQL clave/valor.
             */
 
-           if (this.accion=='nuevo'){
-            this.alumno.idAlumno = generarIdUnicoDesdeFecha();
-           }
-           let db = indexDB.result,
-           transaccion = db.transaction('tblalumnos', "readwrite"),
-           alumnos = transaccion.objectStore('tblalumnos'),
-           query = alumnos.put(JSON.stringify(this.alumno));
+            let store = this.abrirStore("tblalumnos", 'readwrite'),
+            duplicado = false;
 
-           query.onsuccess=event=>{
-            this.obtenerAlumnos();
-            this.limpiar();
-            this.status = true;
-            this.msg = 'Registro exitoso.';
-            this.error = false;
-
-            setTimeout(()=>{
-                this.status=false;
-                this.msg = '';
-            }, 3000);
-         };
-             query.onerror=event=>{
-              this.status = true;
-               this.msg = 'Error al ingresar los datos.';
-              this.error = true; 
-              console.log( event );
-            }; 
-        },
+            if ( this.accion == 'nuevo' ){
+                this.alumno.idAlumno = generarIdUnicoDesdeFecha();
+                let index = store.index("codigo"),
+                    data = index.get(this.alumno.codigo);
+                data.onsuccess=evt=>{
+                    duplicado = evt.target.result!=undefined;
+                };
+            }
+            if ( duplicado == false){
+                let query = store.put(this.alumno);
+                query.onsuccess=event=>{
+                    this.obtenerAlumnos();
+                    this.limpiar();
+                    this.mostrarMsg('Registro guardado con exito',false);
+                };
+                query.onerror=event=>{
+                    this.mostrarMsg('error al guardar registro',true);
+                    console.log( event );
+                };
+            } else{
+                this.mostrarMsg('Codigo del alumno duplicado',true);
+            }
+         },
+            mostrarMsg(msg, error){
+               this.status = true;
+               this.msg = msg;
+               this.error = error; 
+               this.quitarMsg(3);
+             },
+             quitarMsg(time){
+                 setTimeout(()=>{
+                    this.status = false;
+                    this.msg = '';
+                    this.error = false;
+                 }, time*1000);
+             }, 
            
            obtenerAlumnos(){
-            this.alumnos = [];
+            /*this.alumnos = [];
             for (let index = 0; index < localStorage.length; index++) {
                 let key = localStorage.key(index);
                 this.alumnos.push( JSON.parse(localStorage.getItem(key)) );
-            }
+            }*/
+            let store = this.abrirStore('tblalumnos', 'readonly'),
+                data = store.getAll();
+            data.onsuccess=resp=>{
+                this.alumnos = data.result;
+            };
         },
 
         mostrarAlumno(alum){
@@ -92,24 +108,46 @@ var appVue = new Vue({
             this.alumno.telefono='';
             this.alumno.fechaN='';
             this.alumno.sexo='';
+            this.obtenerAlumnos();
         },
 
         eliminarAlumno(alum){
             if (confirm(`Seguro que deseas eliminar el registro: ${alum.nombre}`) ){
-               localStorage.removeItem(alum.idAlumno)
-               this.obtenerAlumnos();
-            }
+               let store = this.abrirStore("tblalumnos", 'readwrite'),
+                   req = store.delete(alum.idAlumno);
+               req.onsuccess=resp=>{
+                   this.mostrarMsg('Registro eliminado con exito',true);
+                   this.obtenerAlumnos();
+               };
+               req.onerror=resp=>{
+                   this.mostrarMsg('Error al eliminar registro',true);
+                   console.log( resp );
+               };
+            };
+        },
+        abrirBd(){
+            let indexDb = indexedDB.open('db_alumnos',1);
+            indexDb.onupgradeneeded=event=>{
+                let req=event.target.result,
+                    tblalumnos = req.createObjectStore('tblalumnos', {keyPath:'idAlumno'});
+                tblalumnos.createIndex('idAlumno', 'idAlumno', {unique:true});
+                tblalumnos.createIndex('codigo', 'codigo', {unique:false});
+            };
+            indexDb.onsuccess=evt=>{
+                db=evt.target.result;
+                this.obtenerAlumnos();
+            };
+            indexDb.onerror=e=>{
+                console.log("Error al conectar la BD", e);
+            };
+        },
+        abrirStore(store,modo){
+           let tx = db.transaction(store,modo);
+           return tx.objectStore(store);
         }
-
     },
-
     created(){
-        indexDB.onupgradeneeded=event=>{
-            let db = event.target.result,
-            tblalumnos = db.createObjectStore('tblalumnos', {autoIncrement:true});
-            tblalumnos.createIndex('idAlumno', 'idAlumno', {unique:true});
-        };
-        this.obtenerAlumnos();
+       this.abrirBd();
     }
 });
      

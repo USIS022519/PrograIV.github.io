@@ -13,7 +13,7 @@
                 <div class="col-sm-5">
                     <div class="row p-2">
                         <div class="col-sm text-center text-white bg-primary">
-                            <h5>REGISTRAR ALUMNO/h5>
+                            <h5>REGISTRAR ALUMNO</h5>
                         </div>
                     </div>
                     <div class="row p-2">
@@ -80,12 +80,12 @@
                 </div>
                 <div class="col-sm"></div>
                 <div class="col-sm-6 p-2">
-                    <div class="row-sm text-center text-white bg-danger">
+                    <div class="row text-center text-white bg-danger">
                         <div class="col"><h5>ALUMNOS REGISTRADOS</h5></div>
                     </div>
                     <div class="row">
                         <div class="col">
-                            <table class="tble table-sm text-ligth sm">
+                            <table class="table table-sm table-hover">
                                 <thead>
                                     <tr>
                                         <td colspan="5">
@@ -115,7 +115,7 @@
                                         <td>{{ alum.fechaN }}</td>
                                         <td>{{ alum.sexo }}</td>
                                         <td>
-                                            <button @click="eliminarAlumno(alum)" class="btn btn-danger">Del</button>
+                                            <a @click.stop="eliminarAlumno(alum)" class="btn btn-danger">Del</a>
                                         </td>
                                     </tr>
                                 </tbody>
