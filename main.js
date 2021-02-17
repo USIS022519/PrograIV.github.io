@@ -33,7 +33,21 @@ var appVue = new Vue({
             }
         },
 
-        guardarAlumno(){
+        buscandoCodigoAlumno(store){
+            let buscarCodigo = new Promise( (resolver,rechazar)=>{
+                let index = store.index("codigo"),
+                    data = index.get(this.alumno.codigo);
+                data.onsuccess=evt=>{
+                    resolver(data);
+                };
+                data.onerror=evt=>{
+                    rechazar(data);
+                };
+            });
+            return buscarCodigo;
+        },
+
+        async guardarAlumno(){
             /*DB indexedDB --> Es una DB NOSQL clave/valor.
               WebSQL --> Esta DB es relacional en el navegador.
               Localstorage --> Esta es NOSQL clave/valor.
@@ -44,11 +58,9 @@ var appVue = new Vue({
 
             if ( this.accion == 'nuevo' ){
                 this.alumno.idAlumno = generarIdUnicoDesdeFecha();
-                let index = store.index("codigo"),
-                    data = index.get(this.alumno.codigo);
-                data.onsuccess=evt=>{
-                    duplicado = evt.target.result!=undefined;
-                };
+                
+                let data = await this.buscandoCodigoAlumno(store);
+                duplicado = data.result!=undefined;
             }
             if ( duplicado == false){
                 let query = store.put(this.alumno);
