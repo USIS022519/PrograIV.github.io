@@ -1,31 +1,30 @@
-Vue.component('component-productos',{
+Vue.component('component-categorias',{
     data:()=>{
         return {
             accion : 'nuevo',
-            msg    : '',
+            msg : '',
             status : false,
-            error  : false,
+            error : false,
             buscar : "",
-            producto:{
-                idProducto  : 0,
-                codigo      : '',
-                descripcion : '',
-                precio      : ''
+            categoria : {
+                idCategoria : 0,
+                codigo : '',
+                descripcion : ''
             },
-            productos:[]
+            categorias: []
         }
     },
     methods:{
-        buscandoProducto(){
-            this.productos = this.productos.filter((element,index,productos) => element.descripcion.toUpperCase().indexOf(this.buscar.toUpperCase())>=0 || element.codigo.toUpperCase().indexOf(this.buscar.toUpperCase())>=0 );
+        buscandoCategoria(){
+            this.categorias = this.categorias.filter((element,index,categorias) => element.descripcion.toUpperCase().indexOf(this.buscar.toUpperCase())>=0 || element.codigo.toUpperCase().indexOf(this.buscar.toUpperCase())>=0 );
             if( this.buscar.length<=0){
                 this.obtenerDatos();
             }
         },
-        buscandoCodigoProducto(store){
+        buscandoCodigoCategoria(store){
             let buscarCodigo = new Promise( (resolver,rechazar)=>{
                 let index = store.index("codigo"),
-                    data = index.get(this.producto.codigo);
+                    data = index.get(this.categoria.codigo);
                 data.onsuccess=evt=>{
                     resolver(data);
                 };
@@ -35,35 +34,30 @@ Vue.component('component-productos',{
             });
             return buscarCodigo;
         },
-        async guardarProducto(){
-            /**
-             * webSQL -> DB Relacional en el navegador
-             * localStorage -> BD NOSQL clave/valor
-             * indexedDB -> BD NOSQL clave/valor
-             */
-
-            let store = this.abrirStore("tblproductos",'readwrite'),
+        async guardarCategoria(){
+            
+            let store = this.abrirStore("tblcategorias",'readwrite'),
                 duplicado = false;
             if( this.accion=='nuevo' ){
-                this.producto.idProducto = generarIdUnicoDesdeFecha();
+                this.categoria.idCategoria = generarIdUnicoDesdeFecha();
 
-                let data = await this.buscandoCodigoProducto(store);
+                let data = await this.buscandoCodigoCategoria(store);
                 duplicado = data.result!=undefined;
             }
             if( duplicado==false){
-                let query = store.put(this.producto);
+                let query = store.put(this.categoria);
                 query.onsuccess=event=>{
                     this.obtenerDatos();
                     this.limpiar();
 
-                    this.mostrarMsg('Registro se guardo con exito',false);
+                    this.mostrarMsg('Categoria guardada con exito',false);
                 };
                 query.onerror=event=>{
-                    this.mostrarMsg('Error al guardar el registro',true);
+                    this.mostrarMsg('Error al guardar la categoria',true);
                     console.log( event );
                 };
             } else{
-                this.mostrarMsg('Codigo de producto duplicado',true);
+                this.mostrarMsg('Codigo de categoria duplicado',true);
             }
         },
         mostrarMsg(msg, error){
@@ -80,34 +74,33 @@ Vue.component('component-productos',{
             }, time*1000);
         },
         obtenerDatos(){
-            let store = this.abrirStore('tblproductos','readonly'),
+            let store = this.abrirStore('tblcategorias','readonly'),
                 data = store.getAll();
             data.onsuccess=resp=>{
-                this.productos = data.result;
+                this.categorias = data.result;
             };
         },
-        mostrarProducto(pro){
-            this.producto = pro;
+        mostrarCategoria(cat){
+            this.categoria = cat;
             this.accion='modificar';
         },
         limpiar(){
             this.accion='nuevo';
-            this.producto.idProducto='';
-            this.producto.codigo='';
-            this.producto.descripcion='';
-            this.producto.precio='';
+            this.categoria.idCategoria='';
+            this.categoria.codigo='';
+            this.categoria.descripcion='';
             this.obtenerDatos();
         },
-        eliminarProducto(pro){
-            if( confirm(`Esta seguro que desea eliminar el producto:  ${pro.descripcion}`) ){
-                let store = this.abrirStore("tblproductos",'readwrite'),
-                    req = store.delete(pro.idProducto);
+        eliminarCategoria(cat){
+            if( confirm(`Esta seguro que desea eliminar el categoria:  ${cat.descripcion}`) ){
+                let store = this.abrirStore("tblcategorias",'readwrite'),
+                    req = store.delete(cat.idCategoria);
                 req.onsuccess=resp=>{
-                    this.mostrarMsg('Registro eliminado con exito',true);
+                    this.mostrarMsg('Categoria eliminada con exito',true);
                     this.obtenerDatos();
                 };
                 req.onerror=resp=>{
-                    this.mostrarMsg('Error al eliminar el registro',true);
+                    this.mostrarMsg('Error al eliminar la categoria',true);
                     console.log( resp );
                 };
             }
@@ -121,42 +114,36 @@ Vue.component('component-productos',{
         
     },
     template:`
-        <form v-on:submit.prevent="guardarProducto" v-on:reset="limpiar">
+        <form v-on:submit.prevent="guardarCategoria" v-on:reset="limpiar">
             <div class="row">
                 <div class="col-sm-5">
                     <div class="row p-2">
                         <div class="col-sm text-center text-white bg-primary">
-                           <div class="row">
+                            <div class="row">
                                 <div class="col-11">
-                                    <h5>REGISTRO DE PRODUCTOS</h5>
+                                    <h5>REGISTRO DE CATEGORIAS</h5>
                                 </div>
                                 <div class="col-1 align-middle" >
-                                    <button type="button" onclick="appVue.forms['producto'].mostrar=false" class="btn-close" aria-label="Close"></button>
+                                    <button type="button" onclick="appVue.forms['categoria'].mostrar=false" class="btn-close" aria-label="Close"></button>
                                 </div>
-                            </div> 
+                            </div>
                         </div>
                     </div>
                     <div class="row p-2">
                         <div class="col-sm">CODIGO:</div>
                         <div class="col-sm">
-                            <input v-model="producto.codigo" required type="text" class="form-control form-control-sm" >
+                            <input v-model="categoria.codigo" required type="text" class="form-control form-control-sm" >
                         </div>
                     </div>
                     <div class="row p-2">
                         <div class="col-sm">DESCRIPCION: </div>
                         <div class="col-sm">
-                            <input v-model="producto.descripcion" required pattern="[A-ZÑña-z0-9, ]{5,65}" type="text" class="form-control form-control-sm">
-                        </div>
-                    </div>
-                    <div class="row p-2">
-                        <div class="col-sm">PRECIO:</div>
-                        <div class="col-sm">
-                            <input v-model="producto.precio" required pattern="^[0-9](.)+?[0-9]$" type="text" class="form-control form-control-sm">
+                            <input v-model="categoria.descripcion" required pattern="[A-ZÑña-z0-9, ]{5,65}" type="text" class="form-control form-control-sm">
                         </div>
                     </div>
                     <div class="row p-2">
                         <div class="col-sm text-center">
-                            <input type="submit" value="Guardar" class="btn btn-danger">
+                            <input type="submit" value="Guardar" class="btn btn-dark">
                             <input type="reset" value="Limpiar" class="btn btn-warning">
                         </div>
                     </div>
@@ -171,7 +158,7 @@ Vue.component('component-productos',{
                 <div class="col-sm"></div>
                 <div class="col-sm-6 p-2">
                     <div class="row text-center text-white bg-primary">
-                        <div class="col"><h5>PRODUCTOS REGISTRADOS</h5></div>
+                        <div class="col"><h5>CATEGORIAS REGISTRADOS</h5></div>
                     </div>
                     <div class="row">
                         <div class="col">
@@ -179,23 +166,21 @@ Vue.component('component-productos',{
                                 <thead>
                                     <tr>
                                         <td colspan="5">
-                                            <input v-model="buscar" v-on:keyup="buscandoProducto" type="text" class="form-control form-contro-sm" placeholder="Buscar productos">
+                                            <input v-model="buscar" v-on:keyup="buscandoCategoria" type="text" class="form-control form-contro-sm" placeholder="Buscar categorias">
                                         </td>
                                     </tr>
                                     <tr>
                                         <th>CODIGO</th>
                                         <th>DESCRIPCION</th>
-                                        <th>PRECIO</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="pro in productos" v-on:click="mostrarProducto(pro)">
-                                        <td>{{ pro.codigo }}</td>
-                                        <td>{{ pro.descripcion }}</td>
-                                        <td>{{ pro.precio }}</td>
+                                    <tr v-for="cat in categorias" v-on:click="mostrarCategoria(cat)">
+                                        <td>{{ cat.codigo }}</td>
+                                        <td>{{ cat.descripcion }}</td>
                                         <td>
-                                            <a @click.stop="eliminarProducto(pro)" class="btn btn-danger">DEL</a>
+                                            <a @click.stop="eliminarCategoria(cat)" class="btn btn-danger">DEL</a>
                                         </td>
                                     </tr>
                                 </tbody>

@@ -1,4 +1,4 @@
-Vue.component('component-productos',{
+Vue.component('component-clientes',{
     data:()=>{
         return {
             accion : 'nuevo',
@@ -6,26 +6,27 @@ Vue.component('component-productos',{
             status : false,
             error  : false,
             buscar : "",
-            producto:{
-                idProducto  : 0,
-                codigo      : '',
-                descripcion : '',
-                precio      : ''
+            cliente:{
+                idCliente : 0,
+                codigo    : '',
+                nombre    : '',
+                direccion : '',
+                telefono  : '',
             },
-            productos:[]
+            clientes:[]
         }
     },
     methods:{
-        buscandoProducto(){
-            this.productos = this.productos.filter((element,index,productos) => element.descripcion.toUpperCase().indexOf(this.buscar.toUpperCase())>=0 || element.codigo.toUpperCase().indexOf(this.buscar.toUpperCase())>=0 );
+        buscandoCliente(){
+            this.clientes = this.clientes.filter((element,index,clientes) => element.nombre.toUpperCase().indexOf(this.buscar.toUpperCase())>=0 || element.codigo.toUpperCase().indexOf(this.buscar.toUpperCase())>=0 );
             if( this.buscar.length<=0){
                 this.obtenerDatos();
             }
         },
-        buscandoCodigoProducto(store){
+        buscandoCodigoCliente(store){
             let buscarCodigo = new Promise( (resolver,rechazar)=>{
                 let index = store.index("codigo"),
-                    data = index.get(this.producto.codigo);
+                    data = index.get(this.cliente.codigo);
                 data.onsuccess=evt=>{
                     resolver(data);
                 };
@@ -35,35 +36,30 @@ Vue.component('component-productos',{
             });
             return buscarCodigo;
         },
-        async guardarProducto(){
-            /**
-             * webSQL -> DB Relacional en el navegador
-             * localStorage -> BD NOSQL clave/valor
-             * indexedDB -> BD NOSQL clave/valor
-             */
-
-            let store = this.abrirStore("tblproductos",'readwrite'),
+        async guardarCliente(){
+            
+            let store = this.abrirStore("tblclientes",'readwrite'),
                 duplicado = false;
             if( this.accion=='nuevo' ){
-                this.producto.idProducto = generarIdUnicoDesdeFecha();
+                this.cliente.idCliente = generarIdUnicoDesdeFecha();
 
-                let data = await this.buscandoCodigoProducto(store);
+                let data = await this.buscandoCodigoCliente(store);
                 duplicado = data.result!=undefined;
             }
             if( duplicado==false){
-                let query = store.put(this.producto);
+                let query = store.put(this.cliente);
                 query.onsuccess=event=>{
                     this.obtenerDatos();
                     this.limpiar();
 
-                    this.mostrarMsg('Registro se guardo con exito',false);
+                    this.mostrarMsg('Cliente se guardado con exito',false);
                 };
                 query.onerror=event=>{
-                    this.mostrarMsg('Error al guardar el registro',true);
+                    this.mostrarMsg('Error al guardar el cliente',true);
                     console.log( event );
                 };
             } else{
-                this.mostrarMsg('Codigo de producto duplicado',true);
+                this.mostrarMsg('Codigo de cliente duplicado',true);
             }
         },
         mostrarMsg(msg, error){
@@ -80,34 +76,35 @@ Vue.component('component-productos',{
             }, time*1000);
         },
         obtenerDatos(){
-            let store = this.abrirStore('tblproductos','readonly'),
+            let store = this.abrirStore('tblclientes','readonly'),
                 data = store.getAll();
             data.onsuccess=resp=>{
-                this.productos = data.result;
+                this.clientes = data.result;
             };
         },
-        mostrarProducto(pro){
-            this.producto = pro;
+        mostrarCliente(cli){
+            this.cliente = cli;
             this.accion='modificar';
         },
         limpiar(){
             this.accion='nuevo';
-            this.producto.idProducto='';
-            this.producto.codigo='';
-            this.producto.descripcion='';
-            this.producto.precio='';
+            this.cliente.idCliente='';
+            this.cliente.codigo='';
+            this.cliente.nombre='';
+            this.cliente.direccion='';
+            this.cliente.telefono='';
             this.obtenerDatos();
         },
-        eliminarProducto(pro){
-            if( confirm(`Esta seguro que desea eliminar el producto:  ${pro.descripcion}`) ){
-                let store = this.abrirStore("tblproductos",'readwrite'),
-                    req = store.delete(pro.idProducto);
+        eliminarCliente(cli){
+            if( confirm(`Esta seguro que desea eliminar el cliente:  ${cli.descripcion}`) ){
+                let store = this.abrirStore("tblclientes",'readwrite'),
+                    req = store.delete(cli.idCliente);
                 req.onsuccess=resp=>{
-                    this.mostrarMsg('Registro eliminado con exito',true);
+                    this.mostrarMsg('Cliente eliminado con exito',true);
                     this.obtenerDatos();
                 };
                 req.onerror=resp=>{
-                    this.mostrarMsg('Error al eliminar el registro',true);
+                    this.mostrarMsg('Error al eliminar el cliente',true);
                     console.log( resp );
                 };
             }
@@ -121,42 +118,48 @@ Vue.component('component-productos',{
         
     },
     template:`
-        <form v-on:submit.prevent="guardarProducto" v-on:reset="limpiar">
+        <form v-on:submit.prevent="guardarCliente" v-on:reset="limpiar">
             <div class="row">
                 <div class="col-sm-5">
                     <div class="row p-2">
                         <div class="col-sm text-center text-white bg-primary">
-                           <div class="row">
+                            <div class="row">
                                 <div class="col-11">
-                                    <h5>REGISTRO DE PRODUCTOS</h5>
+                                    <h5>REGISTRO DE CLIENTES</h5>
                                 </div>
                                 <div class="col-1 align-middle" >
-                                    <button type="button" onclick="appVue.forms['producto'].mostrar=false" class="btn-close" aria-label="Close"></button>
+                                    <button type="button" onclick="appVue.forms['cliente'].mostrar=false" class="btn-close" aria-label="Close"></button>
                                 </div>
-                            </div> 
+                            </div>
                         </div>
                     </div>
                     <div class="row p-2">
                         <div class="col-sm">CODIGO:</div>
                         <div class="col-sm">
-                            <input v-model="producto.codigo" required type="text" class="form-control form-control-sm" >
+                            <input v-model="cliente.codigo" required type="text" class="form-control form-control-sm" >
                         </div>
                     </div>
                     <div class="row p-2">
-                        <div class="col-sm">DESCRIPCION: </div>
+                        <div class="col-sm">NOMBRE: </div>
                         <div class="col-sm">
-                            <input v-model="producto.descripcion" required pattern="[A-ZÑña-z0-9, ]{5,65}" type="text" class="form-control form-control-sm">
+                            <input v-model="cliente.nombre" required pattern="[A-ZÑña-z0-9, ]{5,65}" type="text" class="form-control form-control-sm">
                         </div>
                     </div>
                     <div class="row p-2">
-                        <div class="col-sm">PRECIO:</div>
+                        <div class="col-sm">DIRECCION: </div>
                         <div class="col-sm">
-                            <input v-model="producto.precio" required pattern="^[0-9](.)+?[0-9]$" type="text" class="form-control form-control-sm">
+                            <input v-model="cliente.direccion" required pattern="[A-ZÑña-z0-9, ]{5,65}" type="text" class="form-control form-control-sm">
+                        </div>
+                    </div>
+                    <div class="row p-2">
+                        <div class="col-sm">TEL: </div>
+                        <div class="col-sm">
+                            <input v-model="cliente.telefono" required pattern="[0-9]{4}-[0-9]{4}" type="text" class="form-control form-control-sm">
                         </div>
                     </div>
                     <div class="row p-2">
                         <div class="col-sm text-center">
-                            <input type="submit" value="Guardar" class="btn btn-danger">
+                            <input type="submit" value="Guardar" class="btn btn-dark">
                             <input type="reset" value="Limpiar" class="btn btn-warning">
                         </div>
                     </div>
@@ -171,7 +174,7 @@ Vue.component('component-productos',{
                 <div class="col-sm"></div>
                 <div class="col-sm-6 p-2">
                     <div class="row text-center text-white bg-primary">
-                        <div class="col"><h5>PRODUCTOS REGISTRADOS</h5></div>
+                        <div class="col"><h5>CLIENTES REGISTRADOS</h5></div>
                     </div>
                     <div class="row">
                         <div class="col">
@@ -179,23 +182,25 @@ Vue.component('component-productos',{
                                 <thead>
                                     <tr>
                                         <td colspan="5">
-                                            <input v-model="buscar" v-on:keyup="buscandoProducto" type="text" class="form-control form-contro-sm" placeholder="Buscar productos">
+                                            <input v-model="buscar" v-on:keyup="buscandoCliente" type="text" class="form-control form-contro-sm" placeholder="Buscar clientes">
                                         </td>
                                     </tr>
                                     <tr>
                                         <th>CODIGO</th>
-                                        <th>DESCRIPCION</th>
-                                        <th>PRECIO</th>
+                                        <th>NOMBRE</th>
+                                        <th>DIRECCION</th>
+                                        <th>TEL</th>
                                         <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="pro in productos" v-on:click="mostrarProducto(pro)">
-                                        <td>{{ pro.codigo }}</td>
-                                        <td>{{ pro.descripcion }}</td>
-                                        <td>{{ pro.precio }}</td>
+                                    <tr v-for="cli in clientes" v-on:click="mostrarCliente(cli)">
+                                        <td>{{ cli.codigo }}</td>
+                                        <td>{{ cli.nombre }}</td>
+                                        <td>{{ cli.direccion }}</td>
+                                        <td>{{ cli.telefono }}</td>
                                         <td>
-                                            <a @click.stop="eliminarProducto(pro)" class="btn btn-danger">DEL</a>
+                                            <a @click.stop="eliminarCliente(cli)" class="btn btn-danger">DEL</a>
                                         </td>
                                     </tr>
                                 </tbody>
