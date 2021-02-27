@@ -1,3 +1,4 @@
+Vue.component('v-select-categorias', VueSelect.VueSelect);
 Vue.component('component-productos',{
     data:()=>{
         return {
@@ -8,11 +9,16 @@ Vue.component('component-productos',{
             buscar : "",
             producto:{
                 idProducto  : 0,
+                categoria : {
+                    id : 0,
+                    label : '' 
+                },
                 codigo      : '',
                 descripcion : '',
                 precio      : ''
             },
-            productos:[]
+            productos:[],
+            categorias:[]
         }
     },
     methods:{
@@ -85,6 +91,15 @@ Vue.component('component-productos',{
             data.onsuccess=resp=>{
                 this.productos = data.result;
             };
+            let storeCategoria = this.abrirStore('tblcategorias','readonly'),
+                dataCategoria = storeCategoria.getAll();
+            this.categorias = [];
+            dataCategoria.onsuccess=resp=>{
+                dataCategoria.result.forEach(element => {
+                    this.categorias.push({id:element.idCategoria, label:element.descripcion});
+                });
+
+            };
         },
         mostrarProducto(pro){
             this.producto = pro;
@@ -92,6 +107,8 @@ Vue.component('component-productos',{
         },
         limpiar(){
             this.accion='nuevo';
+            this.producto.categoria.id=0;
+            this.producto.categoria.label="";
             this.producto.idProducto='';
             this.producto.codigo='';
             this.producto.descripcion='';
@@ -134,6 +151,12 @@ Vue.component('component-productos',{
                                     <button type="button" onclick="appVue.forms['producto'].mostrar=false" class="btn-close" aria-label="Close"></button>
                                 </div>
                             </div> 
+                        </div>
+                    </div>
+                    <div class="row p-2">
+                        <div class="col-sm">CATEGORIA:</div>
+                        <div class="col-sm">
+                            <v-select-categorias v-model="producto.categoria" :options="categorias" placeholder="Por favor seleccione la categoria"/>
                         </div>
                     </div>
                     <div class="row p-2">
@@ -186,6 +209,7 @@ Vue.component('component-productos',{
                                         <th>CODIGO</th>
                                         <th>DESCRIPCION</th>
                                         <th>PRECIO</th>
+                                        <thh>CATEGORIA</th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -194,6 +218,7 @@ Vue.component('component-productos',{
                                         <td>{{ pro.codigo }}</td>
                                         <td>{{ pro.descripcion }}</td>
                                         <td>{{ pro.precio }}</td>
+                                        <td>{{ pro.categoria.label }}</td>
                                         <td>
                                             <a @click.stop="eliminarProducto(pro)" class="btn btn-danger">DEL</a>
                                         </td>

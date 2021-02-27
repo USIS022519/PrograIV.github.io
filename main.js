@@ -22,12 +22,12 @@ var appVue = new Vue({
                 let req=event.target.result,
                     tblproductos = req.createObjectStore('tblproductos', {keyPath:'idProducto'}),
                     tblcategorias = req.createObjectStore('tblcategorias', {keyPath:'idCategoria'}),
-                    tblclientes = req.createObjectStore('tblclientes', {keyPath:'IdCliente'}),
-                    tblproveedores = req.createObjectStore('tblproveedores', {keyPath:'idProveedor'}),
-                    tblventas = req.createObjectStore('tblventas', {keyPath:'idVenta'});
+                    tblclientes = req.createObjectStore('tblclientes', {keyPath:'idCliente'}),
+                    tblproveedores = req.createObjectStore('tblproveedores', {keyPath:'idProveedor'})
 
                 tblproductos.createIndex('idProducto','idProducto',{unique:true});
                 tblproductos.createIndex('codigo','codigo',{unique:false});
+                tblproductos.createIndex('id','id',{unique:false});
 
                 tblcategorias.createIndex('idCategoria','idCategoria',{unique:true});
                 tblcategorias.createIndex('codigo','codigo',{unique:false});

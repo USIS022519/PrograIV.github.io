@@ -52,10 +52,10 @@ Vue.component('component-clientes',{
                     this.obtenerDatos();
                     this.limpiar();
 
-                    this.mostrarMsg('Cliente se guardado con exito',false);
+                    this.mostrarMsg('Cliente se guardo con exito',false);
                 };
                 query.onerror=event=>{
-                    this.mostrarMsg('Error al guardar el cliente',true);
+                    this.mostrarMsg('Error al guardar el cleinte',true);
                     console.log( event );
                 };
             } else{
