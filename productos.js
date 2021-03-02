@@ -42,11 +42,6 @@ Vue.component('component-productos',{
             return buscarCodigo;
         },
         async guardarProducto(){
-            /**
-             * webSQL -> DB Relacional en el navegador
-             * localStorage -> BD NOSQL clave/valor
-             * indexedDB -> BD NOSQL clave/valor
-             */
 
             let store = this.abrirStore("tblproductos",'readwrite'),
                 duplicado = false;
