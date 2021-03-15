@@ -1,12 +1,13 @@
 Vue.component('component-categorias',{
     data:()=>{
         return {
-            accion : 'nuevo',
+
             msg : '',
             status : false,
             error : false,
             buscar : "",
             categoria : {
+                accion : 'nuevo',
                 idCategoria : 0,
                 codigo : '',
                 descripcion : ''
@@ -38,13 +39,22 @@ Vue.component('component-categorias',{
             
             let store = this.abrirStore("tblcategorias",'readwrite'),
                 duplicado = false;
-            if( this.accion=='nuevo' ){
+                if( this.categoria.accion=='nuevo' ){
                 this.categoria.idCategoria = generarIdUnicoDesdeFecha();
 
                 let data = await this.buscandoCodigoCategoria(store);
                 duplicado = data.result!=undefined;
             }
-            if( duplicado==false){
+            if( duplicado==false && this.categoria.codigo.trim()!=""){
+                fetch(`private/modulos/categorias/administracion.php?categorias=${JSON.stringify(this.categoria)}`,
+                   {credentials: 'same-origin'})
+                   .then(resp=>resp.json())
+                   .then(resp=>{
+                       this.obtenerDatos();
+                       this.limpiar();
+
+                       this.mostrarMsg('Registro se guardo con exito', false);
+                   });
                 let query = store.put(this.categoria);
                 query.onsuccess=event=>{
                     this.obtenerDatos();
@@ -57,7 +67,7 @@ Vue.component('component-categorias',{
                     console.log( event );
                 };
             } else{
-                this.mostrarMsg('Codigo de categoria duplicado',true);
+                this.mostrarMsg('Codigo de categoria duplicado o vacio',true);
             }
         },
         mostrarMsg(msg, error){
@@ -82,10 +92,10 @@ Vue.component('component-categorias',{
         },
         mostrarCategoria(cat){
             this.categoria = cat;
-            this.accion='modificar';
+            this.categoria.accion='modificar';
         },
         limpiar(){
-            this.accion='nuevo';
+            this.categoria.accion='nuevo';
             this.categoria.idCategoria='';
             this.categoria.codigo='';
             this.categoria.descripcion='';
@@ -93,6 +103,17 @@ Vue.component('component-categorias',{
         },
         eliminarCategoria(cat){
             if( confirm(`Esta seguro que desea eliminar el categoria:  ${cat.descripcion}`) ){
+                this.categoria = cat;
+                this.categoria.accion = "eliminar";
+                fetch(`private/modulos/categorias/administracion.php?categoria=${JSON.stringify(this.categoria)}`,
+                    {credentials : 'same-origin'})
+                    .then(resp=>resp.json())
+                    .then(resp=>{
+                        this.obtenerDatos();
+                        this.limpiar();
+
+                        this.mostrarMsg('Registro se eliminno con exito',true);
+                    });
                 let store = this.abrirStore("tblcategorias",'readwrite'),
                     req = store.delete(cat.idCategoria);
                 req.onsuccess=resp=>{

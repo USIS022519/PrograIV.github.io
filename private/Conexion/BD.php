@@ -20,6 +20,6 @@ class DB_Conexion{
     }
 
     public function obtenerUltimoId(){
-        return $this->result->id();
+        return mysqli_insert_id($this->conexion);
     }
 }

@@ -204,7 +204,7 @@ Vue.component('component-productos',{
                                         <th>CODIGO</th>
                                         <th>DESCRIPCION</th>
                                         <th>PRECIO</th>
-                                        <thh>CATEGORIA</th>
+                                        <th>CATEGORIA</th>
                                         <th></th>
                                     </tr>
                                 </thead>
