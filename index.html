@@ -19,43 +19,30 @@
     <!-- Cuerpo de mi documento -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">::. SISTEMA ACADEMICO .::</a>
+            <a class="navbar-brand" href="#">::. SISTEMA DE AGUA POTABLE.::</a>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link mostrar" data-form="registro_alumnos" href="#">REGISTRO ALUMNO</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link mostrar" data-form="matricula" href="#">MATRICULA</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link mostrar" data-form="inscripcion" href="#">INSCRIPCIÓN MATERIAS</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link mostrar" data-form="materias" href="#">REGISTRO DE MATERIAS</a>
-                    </li>
+                   <li class="nav-item">
+                       <a class="nav-link mostrar" data-form="cliente" href="#">Clientes</a>
+                   </li>
+                   <li class="nav-item">
+                    <a class="nav-link mostrar" data-form="lectura" href="#">Lecturas</a>
+                </li>
                 </ul>
             </div>
         </div>
     </nav>
 
     <div id="appSistema" class="container-fluid">
-        <component-registro_alumnos ref="registro_alumnos" v-show="forms['registro_alumnos'].mostrar">
-        </component-registro_alumnos>
-        <component-matricula ref="matricula" v-show="forms['matricula'].mostrar"></component-matricula>
-        <component-inscripcion ref="inscripcion" v-show="forms['inscripcion'].mostrar"></component-inscripcion>
-        <component-materias ref="materias" v-show="forms['materias'].mostrar"></component-materias>
-
+        <component-clientes ref="cliente" v-show="forms['inscripcion'].mostrar"></component-clientes>
+        <component-lecturas ref="lectura" v-show="forms['materias'].mostrar"></component-lecturas>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
-    <script src="https://unpkg.com/vue-select@latest"></script>
-    <script src="matricula.js"></script>
-    <script src="registro_alumnos.js"></script>
-    <script src="materias.js"></script>
-    <script src="inscripcion.js"></script>
+    <script src="clientes.js"></script>
+    <script src="lecturas.js"></script>
     <script src="main.js"></script>
+
 </body>
 
 </html>
