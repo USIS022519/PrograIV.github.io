@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,13 +7,9 @@
 
     <!--CDN para trabajar con Bootstrap CSS-->
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
     <link rel="stylesheet" href="https://unpkg.com/vue-select@latest/dist/vue-select.css">
-
 </head>
-
 <body>
     <!-- Cuerpo de mi documento -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -22,25 +17,26 @@
             <a class="navbar-brand" href="#">::. SISTEMA DE AGUA POTABLE.::</a>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                   <li class="nav-item">
-                       <a class="nav-link mostrar" data-form="cliente" href="#">Clientes</a>
-                   </li>
-                   <li class="nav-item">
-                    <a class="nav-link mostrar" data-form="lectura" href="#">Lecturas</a>
-                </li>
+                    <li class="nav-item">
+                        <a class="nav-link mostrar" data-form="cliente" href="#">Clientes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mostrar" data-form="lectura" href="#">Lecturas</a>
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
 
     <div id="appSistema" class="container-fluid">
-        <component-clientes ref="cliente" v-show="forms['inscripcion'].mostrar"></component-clientes>
-        <component-lecturas ref="lectura" v-show="forms['materias'].mostrar"></component-lecturas>
+        <component-clientes ref="cliente" v-show="forms['cliente'].mostrar"></component-clientes>
+        <component-lecturas ref="lectura" v-show="forms['lectura'].mostrar"></component-lecturas>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
-    <script src="clientes.js"></script>
     <script src="lecturas.js"></script>
+    <script src="clientes.js"></script>
+
     <script src="main.js"></script>
 
 </body>
